@@ -32,10 +32,23 @@ function App() {
       })
     );
   };
-
+  const deleteTodo = (id:number) => {
+  setTodos(todos.filter((todo) => todo.id !==id))
+  }
+  const editTodo = (id: number, newText: string) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => {
+        if (todo.id === id) {
+          // Update the text of the specified todo
+          return { ...todo, title: newText };
+        }
+        return todo;
+      })
+    );
+  };
   const addTodo = (texts: string[]) => {
-    const newTodo:TodoInterface[] = texts.map((text) => ({
-      id: todos.length  + 1,
+    const newTodo:TodoInterface[] = texts.map((text, index) => ({
+      id: todos.length + index + 1,
       title: text,
       isCompleted: false,
     }));
@@ -45,8 +58,8 @@ function App() {
 
   return (
     <div className='App'>
-      <ToDoForm addTodo={addTodo} />
-      <ToDoList todos={todos} checkTodo={checkTodo} />
+      <ToDoForm addTodo={addTodo}  />
+      <ToDoList todos={todos} checkTodo={checkTodo} deleteTodo={deleteTodo} editTodo={editTodo}/>
     </div>
   );
 }
