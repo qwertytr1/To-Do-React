@@ -1,14 +1,24 @@
 import React from "react"
 import Todo from "./Todo"
-import { todoInterface } from "App"
-const ToDoList = ({ todos }: { todos: todoInterface[] }) => {
-    return (
+import { TodoInterface } from "App"
 
-            <div>
-            <>
-            {todos.map((todo) => {
-               return <Todo key={todo.id} title={todo.title} />
-            })}
-   </> </div>)
+
+interface TodoListProps {
+  todos: TodoInterface[];
+  checkTodo:(id:number) => void;
 }
+
+const ToDoList: React.FC<TodoListProps> = ({ todos, checkTodo }) => {
+  return (
+    <div>
+      <>
+        {todos.map((todo) => (
+           <Todo key={todo.id} title={todo.title} checkTodo={checkTodo} id={todo.id}
+              isCompleted={todo.isCompleted} />
+        ))}
+      </>
+    </div>
+  );
+}
+
 export default ToDoList;
