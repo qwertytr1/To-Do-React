@@ -24,11 +24,13 @@ const ToDoList: React.FC<TodoListProps> = ({ todos, checkTodo, deleteTodo, editT
 
   const filterByTags = (todoTags: string[] | null | undefined) => {
     if (!selectedTags.length) {
-      // No selected tags, show all todos
+
       return true;
     }
     return todoTags?.some((tag) => selectedTags.includes(tag)) ?? false;
   };
+
+  const filteredTodos = todos.filter((todo) => filterByTags(todo.title.match(/#\w+/g)));
 
   return (
     <div>
@@ -53,21 +55,20 @@ const ToDoList: React.FC<TodoListProps> = ({ todos, checkTodo, deleteTodo, editT
             </span>
           ))}
         </div>
+        <button onClick={() => setSelectedTags([])}>Clear and return to other tasks</button>
       </div>
       <>
-        {todos
-          .filter((todo) => filterByTags(todo.title.match(/#\w+/g)))
-          .map((todo) => (
-            <Todo
-              key={todo.id}
-              title={todo.title}
-              editTodo={editTodo}
-              checkTodo={checkTodo}
-              deleteTodo={deleteTodo}
-              id={todo.id}
-              isCompleted={todo.isCompleted}
-            />
-          ))}
+        {filteredTodos.map((todo, index) => (
+          <Todo
+            key={index}
+            title={todo.title}
+            editTodo={editTodo}
+            checkTodo={checkTodo}
+            deleteTodo={deleteTodo}
+            id={todo.id}
+            isCompleted={todo.isCompleted}
+          />
+        ))}
       </>
     </div>
   );
