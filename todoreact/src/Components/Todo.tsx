@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, Typography, Container, IconButton, TextField } from '@mui/material';
 import { Check, Delete, Edit, Save } from '@mui/icons-material';
+import { observer } from 'mobx-react';
 
 interface TodoProps {
   title: string;
@@ -11,7 +12,7 @@ interface TodoProps {
   isCompleted: boolean;
 }
 
-const Todo: React.FC<TodoProps> = ({ title, checkTodo, editTodo, deleteTodo, id, isCompleted }) => {
+const Todo: React.FC<TodoProps> =  ({ title, checkTodo, editTodo, deleteTodo, id, isCompleted }) => {
   const [isEditing, setEditing] = useState<boolean>(false);
   const [newText, setNewText] = useState<string>(title);
 
@@ -80,3 +81,4 @@ const Todo: React.FC<TodoProps> = ({ title, checkTodo, editTodo, deleteTodo, id,
 };
 
 export default Todo;
+

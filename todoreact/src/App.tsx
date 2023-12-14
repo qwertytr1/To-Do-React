@@ -1,6 +1,7 @@
+import React, { useState, useEffect } from 'react';
 import ToDoForm from 'Components/ToDoForms';
-import React, { useState } from 'react';
 import ToDoList from 'Components/ToDoListt';
+import localforage from 'localforage';
 
 type TodoInterface = {
   id: number;
@@ -8,58 +9,63 @@ type TodoInterface = {
   isCompleted: boolean;
 };
 
+const TODOS_KEY = 'todos';
+
 function App() {
-  const [todos, setTodos] = useState<TodoInterface[]>([
-    {
-      id: 1,
-      title: "PLAY",
-      isCompleted: false,
-    },
-    {
-      id: 2,
-      title: "PLAY",
-      isCompleted: true,
-    },
-  ]);
+  const [todos, setTodos] = useState<TodoInterface[]>([]);
+
+  useEffect(() => {
+    localforage.getItem<TodoInterface[]>(TODOS_KEY).then((storedTodos) => {
+      if (storedTodos) {
+        setTodos(storedTodos);
+      }
+    });
+  }, []);
+
+  const updateTodos = (newTodos: TodoInterface[]) => {
+    setTodos(newTodos);
+    localforage.setItem(TODOS_KEY, newTodos);
+  };
+
   const checkTodo = (id: number) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => {
+    updateTodos(
+      todos.map((todo) => {
         if (todo.id === id) {
           todo.isCompleted = !todo.isCompleted;
         }
-        console.log(todo.isCompleted);
         return todo;
       })
     );
   };
-  const deleteTodo = (id:number) => {
-  setTodos(todos.filter((todo) => todo.id !==id))
-  }
+
+  const deleteTodo = (id: number) => {
+    updateTodos(todos.filter((todo) => todo.id !== id));
+  };
+
   const editTodo = (id: number, newText: string) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => {
+    updateTodos(
+      todos.map((todo) => {
         if (todo.id === id) {
-          // Update the text of the specified todo
           return { ...todo, title: newText };
         }
         return todo;
       })
     );
   };
+
   const addTodo = (texts: string[]) => {
-    const newTodo:TodoInterface[] = texts.map((text, index) => ({
+    const newTodos: TodoInterface[] = texts.map((text, index) => ({
       id: todos.length + index + 1,
       title: text,
       isCompleted: false,
     }));
-    console.log(newTodo);
-    setTodos([...todos, ...newTodo]);
+    updateTodos([...todos, ...newTodos]);
   };
 
   return (
     <div className='App'>
-      <ToDoForm addTodo={addTodo}  />
-      <ToDoList todos={todos} checkTodo={checkTodo} deleteTodo={deleteTodo} editTodo={editTodo}/>
+      <ToDoForm addTodo={addTodo} />
+      <ToDoList todos={todos} checkTodo={checkTodo} deleteTodo={deleteTodo} editTodo={editTodo} />
     </div>
   );
 }
